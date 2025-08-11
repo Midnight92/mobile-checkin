@@ -88,10 +88,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Meta (Area > Cluster > Plant) ---
 const META = {
-  companies: ['PDO', 'BP Oman', 'OQ', 'CCED', 'Schlumberger'],
+  companies: ['PDO', 'Galfar PDC', 'Galfar ODC', 'STS'],
   areas: {
-    North: { 'Cluster N1': ['Plant N1-A', 'Plant N1-B'], 'Cluster N2': ['Plant N2-A'] },
-    Central: { 'Cluster C1': ['Plant C1-A', 'Plant C1-B'], 'Cluster C2': ['Plant C2-A'] },
+    North: { 'Qarn Alam': ['Steam', 'Ghaba North'], 'Fahud': ['Fahud A'] },
     South: { 'Cluster S1': ['Plant S1-A', 'Plant S1-B', 'Plant S1-C'], 'Cluster S2': ['Plant S2-A'] }
   }
 };
