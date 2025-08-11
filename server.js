@@ -70,10 +70,7 @@ app.use((req, res, next) => {
 const PgStore = connectPgSimple(session);
 app.use(
   session({
-    store: new PgStore({
-      pool,
-      createTableIfMissing: true
-    }),
+    store: new PgStore({ pool, createTableIfMissing: true }),
     secret: process.env.SESSION_SECRET || 'dev_secret',
     resave: false,
     saveUninitialized: false,
@@ -142,7 +139,6 @@ app.post('/api/login', async (req, res) => {
       [deviceId, firstName, lastName, jobId, phone, company, area, cluster, plant, ts]
     );
 
-    // analytics event (date-only)
     const dateOnly = ts.slice(0, 10); // yyyy-mm-dd
     await pool.query(
       `INSERT INTO login_events (ts_date, area, cluster, plant, count)
@@ -152,7 +148,7 @@ app.post('/api/login', async (req, res) => {
     );
 
     res.json({ ok: true });
-  } catch (e) {
+  } catch {
     res.status(500).json({ error: 'db' });
   }
 });

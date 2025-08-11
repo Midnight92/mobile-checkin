@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: EPZ-Tracker
+    env: node
+    buildCommand: "npm install"
+    startCommand: "node server.js"
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: SESSION_SECRET
+        sync: false
+      - key: SESSION_MINUTES
+        value: "120"
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASS
+        sync: false
+      - key: DATABASE_URL
+        sync: false

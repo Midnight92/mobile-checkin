@@ -1,8 +1,12 @@
-{  
-    "name": "EPZ Tracker",
-  "version": "1.0.0",
+{
+  "name": "EPZ-Tracker",
+  "version": "1.1.0",
+  "private": true,
   "type": "module",
-  "scripts": { "dev": "node server.js", "start": "NODE_ENV=production node server.js" },
+  "scripts": {
+    "dev": "node server.js",
+    "start": "NODE_ENV=production node server.js"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "connect-pg-simple": "^9.0.0",
