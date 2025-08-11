@@ -1,7 +1,7 @@
 :root { --bg:#f6faf6; --card:#ffffff; --text:#112012; --muted:#5c6f5e; --accent:#007a33; /* PDO green-ish */ }
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--text);}
-.container{max-width:720px;margin:0 auto;padding:24px;position:relative;}
+.container{max-width:100%;margin:0 auto;padding:24px;position:relative;}
 /* soft logo-like blobs */
 body::before, body::after{
   content:""; position:fixed; inset:-20vh -10vw auto auto; width:60vw; height:60vh; filter:blur(60px); opacity:.15; z-index:-1;
