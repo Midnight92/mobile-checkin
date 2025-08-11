@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>EPZ Tracker</title>
+  <link rel="stylesheet" href="/styles.css"/>
+</head>
+<body>
+  <div class="container">
+    <div id="desktop-block" class="card hidden">
+      <h1>Mobile/Tablet Required</h1>
+      <p>Please open this site on a <strong>phone or tablet</strong> to continue.</p>
+      <p class="small">Tip: scan a QR code of this URL on your phone.</p>
+    </div>
+
+    <div id="app" class="card hidden">
+      <div id="welcome" class="hidden">
+        <h1 id="salam">Salam</h1>
+        <p class="small">Please stay safe.</p>
+        <button id="logoutBtn">Check Out</button>
+        <p class="small">Your session is saved to this device. You can close the page and come back to log out.</p>
+      </div>
+
+      <div id="form-wrap" class="hidden">
+        <h1>EPZ Tracker</h1>
+        <p class="badge">Device detected as phone/tablet</p>
+        <form id="loginForm">
+          <div class="row two">
+            <div>
+              <label>First name</label>
+              <input required name="firstName" autocomplete="given-name"/>
+            </div>
+            <div>
+              <label>Last name</label>
+              <input required name="lastName" autocomplete="family-name"/>
+            </div>
+          </div>
+          <div class="row two">
+            <div>
+              <label>Job reference / Job ID</label>
+              <input required name="jobId"/>
+            </div>
+            <div>
+              <label>Phone number</label>
+              <input required name="phone" inputmode="tel"/>
+            </div>
+          </div>
+          <div class="row two">
+            <div>
+              <label>Company</label>
+              <select required name="company" id="company"></select>
+            </div>
+            <div>
+              <label>Area</label>
+              <select required name="area" id="area"></select>
+            </div>
+          </div>
+          <div class="row two">
+            <div>
+              <label>Cluster</label>
+              <select required name="cluster" id="cluster"></select>
+            </div>
+            <div>
+              <label>Plant</label>
+              <select required name="plant" id="plant"></select>
+            </div>
+          </div>
+          <div class="row two">
+            <div>
+              <label>Date</label>
+              <input type="date" name="date" id="date" required />
+            </div>
+            <div>
+              <label>Time</label>
+              <input type="time" name="time" id="time" required />
+            </div>
+          </div>
+          <button type="submit">Check in</button>
+          <p class="small">By continuing you consent to store a device identifier in your browser for session recall.</p>
+          <div id="err" class="warning hidden"></div>
+        </form>
+      </div>
+    </div>
+
+    <noscript>
+      <div class="card warning">This app needs JavaScript enabled.</div>
+    </noscript>
+  </div>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

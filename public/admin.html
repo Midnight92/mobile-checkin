@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin – Check-Ins</title>
+  <link rel="stylesheet" href="/styles.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>Admin</h1>
+        <div>
+          <button id="logoutAdmin" class="hidden">Log out</button>
+        </div>
+      </div>
+
+      <div id="adminLogin">
+        <label>Username</label>
+        <input id="u"/>
+        <label>Password</label>
+        <input id="p" type="password"/>
+        <button id="loginAdmin">Login</button>
+        <div id="aerr" class="warning hidden"></div>
+      </div>
+
+      <div id="panel" class="hidden">
+        <h2>Active logins</h2>
+        <div class="row two">
+          <div>
+            <label>Area</label>
+            <select id="fArea"><option value="">All</option></select>
+          </div>
+          <div>
+            <label>Cluster</label>
+            <select id="fCluster"><option value="">All</option></select>
+          </div>
+        </div>
+        <div class="row two">
+          <div>
+            <label>Plant</label>
+            <select id="fPlant"><option value="">All</option></select>
+          </div>
+          <div>
+            <label>Company</label>
+            <select id="fCompany"><option value="">All</option></select>
+          </div>
+        </div>
+        <div class="row two">
+          <div>
+            <label>Name contains</label>
+            <input id="fName" placeholder="e.g. Ahmed"/>
+          </div>
+          <div class="center" style="align-self:end">
+            <button id="apply">Apply filters</button>
+          </div>
+        </div>
+        <p class="small" id="count"></p>
+        <table class="table" id="tbl">
+          <thead><tr>
+            <th>Name</th><th>Job ID</th><th>Phone</th><th>Company</th><th>Area</th><th>Cluster</th><th>Plant</th><th>Time</th><th>Actions</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="chart-wrap">
+          <h2>Logins over time</h2>
+          <div class="row two">
+            <div>
+              <label>From</label>
+              <input type="date" id="start" />
+            </div>
+            <div>
+              <label>To</label>
+              <input type="date" id="end" />
+            </div>
+          </div>
+          <button id="loadChart">Load graph</button>
+          <canvas id="loginChart" height="260"></canvas>
+          <p class="small">Filters apply to the graph: Area → Cluster → Plant.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- NEW FILE NAME BELOW -->
+  <script src="/admin.live.js" type="module"></script>
+</body>
+</html>
