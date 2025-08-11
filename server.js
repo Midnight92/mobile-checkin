@@ -3,7 +3,7 @@ import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import dotenv from 'dotenv';
