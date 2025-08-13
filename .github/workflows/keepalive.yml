@@ -1,0 +1,14 @@
+name: Keep Render Awake
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"  # Every 5 minutes (UTC)
+  workflow_dispatch:        # Allows manual run from GitHub Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render health endpoint
+        run: |
+          curl -sS -m 10 https://epz-tracker.onrender.com/health || true
