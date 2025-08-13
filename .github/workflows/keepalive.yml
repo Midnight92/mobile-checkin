@@ -2,7 +2,7 @@ name: Keep Render Awake
 
 on:
   schedule:
-    - cron: "*/14 * * * *"  # Every 14 minutes (UTC)
+    - cron: "*/5 * * * *"  # Every 5 minutes (UTC)
   workflow_dispatch:        # Allows manual run from GitHub Actions tab
 
 jobs:
