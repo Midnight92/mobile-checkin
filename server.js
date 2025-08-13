@@ -8,6 +8,8 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import dotenv from 'dotenv';
 import pg from 'pg';
+import rateLimit from 'express-rate-limit';
+
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -53,6 +55,15 @@ async function initDb() {
   `);
 }
 initDb().catch(console.error);
+
+// --- Login Limiter ---
+const loginLimiter = rateLimit({
+  windowMs: 60 * 1000,   // 1 minute window
+  max: 10,                // max 5 attempts per IP per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 
 // --- Middleware ---
 app.set('trust proxy', 1);
@@ -120,7 +131,7 @@ app.get('/api/status', async (req, res) => {
   }
 });
 
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', loginLimiter, async (req, res) => {
   const { deviceId, firstName, lastName, jobId, phone, company, area, cluster, plant, ts } = req.body;
   if (!deviceId || !firstName || !lastName || !jobId || !phone || !company || !area || !cluster || !plant || !ts) {
     return res.status(400).json({ error: 'missing_fields' });
