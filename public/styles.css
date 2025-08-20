@@ -35,7 +35,7 @@ button{cursor:pointer;border:0;background:var(--accent);color:#fff;font-weight:7
 }
 
 /* Tabs */
-.tabs { display:flex; gap:.5rem; border-bottom:1px solid #e6e6e6; margin-bottom:1rem; }
+.tabs { display:flex; gap:.5rem; border-bottom:1px solid grey; margin-bottom:1rem; }
 .tab { background:transparent; border:none; padding:.6rem 1rem; cursor:pointer; font-weight:600; }
 .tab.active { border-bottom:3px solid #0b6a27; color:#0b6a27; }
 
