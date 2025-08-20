@@ -1,90 +1,121 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="/styles.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin · EPZ Tracker</title>
+  <link rel="stylesheet" href="/styles.css" />
 </head>
-<body>
-  <div class="container">
-    <div class="card">
-      <div class="header">
-        <h1>Admin</h1>
-        <div>
-          <button id="logoutAdmin" class="hidden">Log out</button>
-        </div>
+<body class="bg">
+
+  <main class="card max">
+    <header class="row-between">
+      <h1>Admin</h1>
+      <button id="logoutAdmin" class="btn danger hidden">Log out</button>
+    </header>
+
+    <!-- Login box -->
+    <section id="adminLogin">
+      <div class="grid-2">
+        <label>Username <input id="u" autocomplete="username" /></label>
+        <label>Password <input id="p" type="password" autocomplete="current-password" /></label>
+      </div>
+      <div class="row">
+        <button id="loginAdmin" class="btn primary">Log in</button>
+        <span id="aerr" class="err hidden"></span>
+      </div>
+    </section>
+
+    <!-- Panel -->
+    <section id="panel" class="hidden">
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="tab-logins">Active logins</button>
+        <button class="tab" data-tab="tab-analytics">Analytics</button>
       </div>
 
-      <div id="adminLogin">
-        <label>Username</label>
-        <input id="u"/>
-        <label>Password</label>
-        <input id="p" type="password"/>
-        <button id="loginAdmin">Login</button>
-        <div id="aerr" class="warning hidden"></div>
-      </div>
+      <!-- TAB: Active logins -->
+      <section id="tab-logins" class="tabpane">
 
-      <div id="panel" class="hidden">
-        <h2>Active Checkins</h2>
-        <div class="row two">
-          <div>
-            <label>Area</label>
+        <h2>Active logins</h2>
+        <div class="filters grid-4">
+          <label>Area
             <select id="fArea"><option value="">All</option></select>
-          </div>
-          <div>
-            <label>Cluster</label>
+          </label>
+          <label>Cluster
             <select id="fCluster"><option value="">All</option></select>
-          </div>
-        </div>
-        <div class="row two">
-          <div>
-            <label>Plant</label>
+          </label>
+          <label>Plant
             <select id="fPlant"><option value="">All</option></select>
-          </div>
-          <div>
-            <label>Company</label>
+          </label>
+          <label>Company
             <select id="fCompany"><option value="">All</option></select>
+          </label>
+          <label class="col-2">Name contains
+            <input id="fName" placeholder="e.g. Ahmed" />
+          </label>
+          <div class="col-2 row-right">
+            <button id="apply" class="btn primary">Apply filters</button>
           </div>
         </div>
-        <div class="row two">
-          <div>
-            <label>Name contains</label>
-            <input id="fName" placeholder="e.g. Ahmed"/>
-          </div>
-          <div class="center" style="align-self:end">
-            <button id="apply">Apply filters</button>
+
+        <p id="count" class="muted">0 currently logged in</p>
+
+        <div class="table-wrap">
+          <table id="tbl">
+            <thead>
+              <tr>
+                <th>Name</th><th>Job ID</th><th>Phone</th><th>Company</th>
+                <th>Area</th><th>Cluster</th><th>Plant</th><th>Time</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- TAB: Analytics -->
+      <section id="tab-analytics" class="tabpane hidden">
+
+        <h2>Logins over time</h2>
+
+        <!-- Graph has its own independent filters -->
+        <div class="filters grid-4">
+          <label>Area
+            <select id="gArea"><option value="">All</option></select>
+          </label>
+          <label>Cluster
+            <select id="gCluster"><option value="">All</option></select>
+          </label>
+          <label>Plant
+            <select id="gPlant"><option value="">All</option></select>
+          </label>
+
+          <label>From
+            <input id="start" type="date" />
+          </label>
+          <label>To
+            <input id="end" type="date" />
+          </label>
+
+          <div class="col-2 row-right">
+            <button id="loadChart" class="btn primary">Load graph</button>
           </div>
         </div>
-        <p class="small" id="count"></p>
-        <table class="table" id="tbl">
-          <thead><tr>
-            <th>Name</th><th>Job ID</th><th>Phone</th><th>Company</th><th>Area</th><th>Cluster</th><th>Plant</th><th>Time</th><th>Actions</th>
-          </tr></thead>
-          <tbody></tbody>
-        </table>
 
         <div class="chart-wrap">
-          <h2>Logins over time</h2>
-          <div class="row two">
-            <div>
-              <label>From</label>
-              <input type="date" id="start" />
-            </div>
-            <div>
-              <label>To</label>
-              <input type="date" id="end" />
-            </div>
-          </div>
-          <button id="loadChart">Load graph</button>
-          <canvas id="loginChart" height="260"></canvas>
-          <p class="small">Filters apply to the graph: Area → Cluster → Plant.</p>
+          <canvas id="loginChart"></canvas>
         </div>
-      </div>
-    </div>
-  </div>
-  <!-- NEW FILE NAME BELOW -->
+
+        <p class="muted">These filters apply only to the graph (Area → Cluster → Plant and date range).</p>
+
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="/admin.live.js" type="module"></script>
 </body>
 </html>
