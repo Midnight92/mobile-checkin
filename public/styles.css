@@ -1,86 +1,200 @@
-:root { --bg:#f6faf6; --card:#ffffff; --text:#112012; --muted:#5c6f5e; --accent:#007a33; /* PDO green-ish */ }
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--text);}
-.container{max-width:100%;margin:0 auto;padding:24px;position:relative;}
-/* soft logo-like blobs */
-body::before, body::after{
-  content:""; position:fixed; inset:-20vh -10vw auto auto; width:60vw; height:60vh; filter:blur(60px); opacity:.15; z-index:-1;
-  background:radial-gradient(circle at 30% 30%, #37b24d 0%, transparent 55%),
-             radial-gradient(circle at 70% 60%, #2f9e44 0%, transparent 45%),
-             radial-gradient(circle at 20% 80%, #66c17a 0%, transparent 40%);
-}
-body::after{ inset:auto auto -20vh -10vw; }
-.card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 10px 24px rgba(0,0,0,.08);}
-h1{font-size:1.6rem;margin:0 0 12px}
-label{display:block;margin:12px 0 6px;color:var(--muted)}
-input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid #dfe7e0;background:#ffffff;color:var(--text)}
-button{cursor:pointer;border:0;background:var(--accent);color:#fff;font-weight:700}
-.row{display:grid;gap:12px;grid-template-columns:1fr}
-@media(min-width:520px){.row.two{grid-template-columns:1fr 1fr}}
-.small{font-size:.9rem;color:var(--muted)}
-.hidden{display:none}
-.badge{display:inline-block;padding:4px 10px;border-radius:999px;background:#e9f5ec;color:#2f7a3b;font-size:.8rem;border:1px solid #cfe9d6}
-.table{width:100%;border-collapse:collapse;margin-top:12px}
-.table th,.table td{padding:8px;border-bottom:1px solid #e8efe9;text-align:left}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.warning{background:#fff7f0;border:1px solid #ffd7b5;color:#7a3e00;padding:12px;border-radius:12px;margin-bottom:12px}
-.center{text-align:center}
-.chart-wrap{margin-top:16px;background:#fff;border:1px solid #e8efe9;border-radius:16px;padding:12px}
-/* Add near the bottom */
-.chart-wrap { overflow: hidden; }      /* prevent the section from growing */
-#loginChart {
-  display: block;
-  width: 100% !important;
-  height: 320px !important;            /* hard height */
+/* ======================================================
+   EPZ Tracker – Global Styles
+   ------------------------------------------------------
+   Palette is PDO-green forward; light theme.
+   ====================================================== */
+
+/* ---------- Theme tokens ---------- */
+:root {
+  --bg: #f6faf6;
+  --card: #ffffff;
+  --text: #112012;
+  --muted: #5c6f5e;
+  --border: #dfe7e0;
+  --border-soft: #e8efe9;
+  --accent: #007a33;        /* PDO green */
+  --accent-strong: #0b6a27; /* deeper green */
+  --danger: #b42318;        /* for destructive actions */
 }
 
-/* === Fix header logout button (stop full width) === */
+/* ---------- Base / reset ---------- */
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Soft, blurred logo-like blobs in the background */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20vh -10vw auto auto;
+  width: 60vw;
+  height: 60vh;
+  filter: blur(60px);
+  opacity: .15;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 30% 30%, #37b24d 0%, transparent 55%),
+    radial-gradient(circle at 70% 60%, #2f9e44 0%, transparent 45%),
+    radial-gradient(circle at 20% 80%, #66c17a 0%, transparent 40%);
+}
+body::after { inset: auto auto -20vh -10vw; }
+
+/* ---------- Layout wrappers ---------- */
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  position: relative;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+}
+
+/* ---------- Type ---------- */
+h1 { font-size: 1.6rem; margin: 0 0 12px; }
+h2 { margin: 0 0 12px; }
+
+label { display: block; margin: 12px 0 6px; color: var(--muted); }
+
+.small, .muted { font-size: .9rem; color: var(--muted); }
+
+/* ---------- Forms & controls ---------- */
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+}
+
+/* Default button look (used by generic <button>) */
+button {
+  cursor: pointer;
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Utility buttons (explicit classes) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  padding: .6rem 1rem;
+  font-weight: 700;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.btn.primary { background: var(--accent); color: #fff; }
+.btn.danger  { background: var(--danger); color: #fff; }
+.btn.ghost   { background: transparent; color: var(--accent-strong); border: 1px solid var(--border); }
+
+/* Keep header logout button compact (don’t stretch full width) */
 header .btn,
-.row-between .btn {
-  display: inline-flex;      /* not block */
-  width: auto;               /* don't stretch */
-  padding: .5rem .9rem;
+.row-between .btn { display: inline-flex; width: auto; padding: .5rem .9rem; }
+
+/* ---------- Tables ---------- */
+.table-container { width: 100%; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+table th, table td { padding: 8px 12px; border-bottom: 1px solid var(--border-soft); text-align: left; }
+
+/* Make the last column (Actions) hug its content */
+table th:last-child,
+table td:last-child { width: 1%; white-space: nowrap; }
+
+/* ---------- Feedback / badges ---------- */
+.warning {
+  background: #fff7f0;
+  border: 1px solid #ffd7b5;
+  color: #7a3e00;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e9f5ec;
+  color: #2f7a3b;
+  font-size: .8rem;
+  border: 1px solid #cfe9d6;
 }
 
-/* === Tabs: own look, not the .btn look === */
+/* ---------- Tabs (independent from .btn look) ---------- */
 .tabs {
   display: flex;
   gap: .5rem;
   border-bottom: 1px solid #d8e5da;
   margin: .5rem 0 1rem;
 }
-
-/* wipe inherited .btn styles inside tabs */
 .tabs .tab {
-  all: unset;
+  all: unset;                       /* wipe inherited generic button rules */
   display: inline-flex;
   align-items: center;
   cursor: pointer;
   padding: .55rem .9rem;
   font-weight: 600;
-  color: #24412d;            /* visible on light bg */
+  color: #24412d;
   border-bottom: 3px solid transparent;
   border-radius: 0;
   line-height: 1.1;
 }
-
 .tabs .tab:hover { opacity: .85; }
-.tabs .tab.active {
-  color: #0b6a27;            /* PDO green */
-  border-color: #0b6a27;     /* underline for active tab */
+.tabs .tab.active { color: var(--accent-strong); border-color: var(--accent-strong); }
+
+/* ---------- Chart area (fixed height; no infinite grow) ---------- */
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  padding: 12px;
+  overflow: hidden;
+}
+#loginChart {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-/* ensure hidden panes actually hide */
-.hidden { display: none !important; }
+/* ---------- Layout helpers ---------- */
+.row            { display: grid; gap: 12px; grid-template-columns: 1fr; }
+.row.two        { grid-template-columns: 1fr 1fr; }
+.grid-2         { display: grid; grid-template-columns: repeat(2, minmax(160px, 1fr)); gap: .75rem; }
+.grid-4         { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: .75rem; }
+.col-2          { grid-column: span 2; }
+.row-right      { display: flex; justify-content: flex-end; align-items: end; gap: .5rem; }
+.row-between    { display: flex; justify-content: space-between; align-items: center; }
+.center         { text-align: center; }
+.hidden         { display: none !important; }
 
-
-/* Layout helpers */
-.grid-4 { display:grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap:.75rem; }
-.grid-2 { display:grid; grid-template-columns: repeat(2, minmax(160px, 1fr)); gap:.75rem; }
-.col-2 { grid-column: span 2; }
-.row-right { display:flex; justify-content:flex-end; align-items:end; gap:.5rem; }
-.row-between { display:flex; justify-content:space-between; align-items:center; }
-
-/* Chart sizing (prevents infinite scroll) */
-.chart-wrap { position:relative; width:100%; height:320px; overflow:hidden; }
-#loginChart { display:block; width:100% !important; height:100% !important; }
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 900px) {
+  .grid-4 { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+}
+@media (max-width: 600px) {
+  .grid-4, .grid-2 { grid-template-columns: 1fr; }
+  table { font-size: 14px; }
+  table th, table td { padding: 6px 8px; }
+}
