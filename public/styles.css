@@ -33,3 +33,19 @@ button{cursor:pointer;border:0;background:var(--accent);color:#fff;font-weight:7
   width: 100% !important;
   height: 320px !important;            /* hard height */
 }
+
+/* Tabs */
+.tabs { display:flex; gap:.5rem; border-bottom:1px solid #e6e6e6; margin-bottom:1rem; }
+.tab { background:transparent; border:none; padding:.6rem 1rem; cursor:pointer; font-weight:600; }
+.tab.active { border-bottom:3px solid #0b6a27; color:#0b6a27; }
+
+/* Layout helpers */
+.grid-4 { display:grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap:.75rem; }
+.grid-2 { display:grid; grid-template-columns: repeat(2, minmax(160px, 1fr)); gap:.75rem; }
+.col-2 { grid-column: span 2; }
+.row-right { display:flex; justify-content:flex-end; align-items:end; gap:.5rem; }
+.row-between { display:flex; justify-content:space-between; align-items:center; }
+
+/* Chart sizing (prevents infinite scroll) */
+.chart-wrap { position:relative; width:100%; height:320px; overflow:hidden; }
+#loginChart { display:block; width:100% !important; height:100% !important; }

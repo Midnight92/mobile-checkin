@@ -1,4 +1,4 @@
-// ---- tiny helpers ----
+// ---------- helpers ----------
 const $ = (id) => document.getElementById(id);
 async function fetchJSON(url, opts = {}) {
   const res = await fetch(url, { cache: 'no-store', ...opts });
@@ -10,29 +10,33 @@ async function fetchJSON(url, opts = {}) {
   return res.json();
 }
 
-// ---- DOM ----
 const loginBtn = $('loginAdmin');
 const logoutBtn = $('logoutAdmin');
-const panel = $('panel');
 const loginBox = $('adminLogin');
+const panel = $('panel');
 const aerr = $('aerr');
 
-const fArea = $('fArea');
-const fCluster = $('fCluster');
-const fPlant = $('fPlant');
-const fCompany = $('fCompany');
-const fName = $('fName');
+const tabs = document.querySelectorAll('.tab');
+const panes = document.querySelectorAll('.tabpane');
+
+const fArea = $('fArea'), fCluster = $('fCluster'), fPlant = $('fPlant'), fCompany = $('fCompany'), fName = $('fName');
 const applyBtn = $('apply');
 const tbody = document.querySelector('#tbl tbody');
 const count = $('count');
-const start = $('start');
-const end = $('end');
-let chart, pollHandle, idleTimer;
 
-const IDLE_MIN = 15;           // auto-logout after 15 mins idle
-const POLL_MS = 10000;         // live refresh every 10s
+const gArea = $('gArea'), gCluster = $('gCluster'), gPlant = $('gPlant');
+const start = $('start'), end = $('end');
+const loadChartBtn = $('loadChart');
 
-// ---- idle logout ----
+let meta;
+let chart;
+let pollHandle;
+let idleTimer;
+
+const IDLE_MIN = 15;   // auto-logout after 15 min
+const POLL_MS = 10000; // table refresh
+
+// ---------- idle/logout ----------
 function resetIdleTimer() {
   clearTimeout(idleTimer);
   idleTimer = setTimeout(async () => {
@@ -44,33 +48,38 @@ function resetIdleTimer() {
   window.addEventListener(ev, resetIdleTimer, { passive: true })
 );
 
-// ---- Filters/meta ----
-async function initFilters() {
-  const meta = await fetchJSON('/api/meta');
-  // areas
-  fArea.innerHTML = '<option value="">All</option>';
-  Object.keys(meta.areas).forEach(a => fArea.appendChild(new Option(a, a)));
-  // companies
-  fCompany.innerHTML = '<option value="">All</option>';
-  meta.companies.forEach(c => fCompany.appendChild(new Option(c, c)));
+// ---------- meta & filter chains ----------
+async function loadMeta() {
+  meta = await fetchJSON('/api/meta');
+}
 
+function buildAreaChain(areaSel, clusterSel, plantSel) {
+  function syncAreas() {
+    areaSel.innerHTML = '<option value="">All</option>';
+    Object.keys(meta.areas).forEach(a => areaSel.appendChild(new Option(a, a)));
+  }
   function syncClusters() {
-    fCluster.innerHTML = '<option value="">All</option>';
-    const clusters = meta.areas[fArea.value] || {};
-    Object.keys(clusters).forEach(cl => fCluster.appendChild(new Option(cl, cl)));
+    clusterSel.innerHTML = '<option value="">All</option>';
+    const clusters = meta.areas[areaSel.value] || {};
+    Object.keys(clusters).forEach(c => clusterSel.appendChild(new Option(c, c)));
     syncPlants();
   }
   function syncPlants() {
-    fPlant.innerHTML = '<option value="">All</option>';
-    const clusters = meta.areas[fArea.value] || {};
-    (clusters[fCluster.value] || []).forEach(p => fPlant.appendChild(new Option(p, p)));
+    plantSel.innerHTML = '<option value="">All</option>';
+    const clusters = meta.areas[areaSel.value] || {};
+    (clusters[clusterSel.value] || []).forEach(p => plantSel.appendChild(new Option(p, p)));
   }
+  areaSel.addEventListener('change', syncClusters);
+  clusterSel.addEventListener('change', syncPlants);
+  syncAreas(); syncClusters(); // initialize
+}
 
-  fArea.addEventListener('change', syncClusters);
-  fCluster.addEventListener('change', syncPlants);
-  syncClusters();
+function initCompany() {
+  fCompany.innerHTML = '<option value="">All</option>';
+  meta.companies.forEach(c => fCompany.appendChild(new Option(c, c)));
+}
 
-  // default range: last 7 days → today
+function initDates() {
   const now = new Date();
   const toISO = (d) => d.toISOString().slice(0, 10);
   end.value = toISO(now);
@@ -78,16 +87,19 @@ async function initFilters() {
   start.value = toISO(lastWeek);
 }
 
-// ---- table & chart ----
+// ---------- table ----------
 async function loadTable() {
-  const params = new URLSearchParams();
-  if (fArea.value) params.set('area', fArea.value);
-  if (fCluster.value) params.set('cluster', fCluster.value);
-  if (fPlant.value) params.set('plant', fPlant.value);
-  if (fCompany.value) params.set('company', fCompany.value);
-  if (fName.value.trim()) params.set('name', fName.value.trim());
+  const qs = new URLSearchParams();
+  if (fArea.value) qs.set('area', fArea.value);
+  if (fCluster.value) qs.set('cluster', fCluster.value);
+  if (fPlant.value) qs.set('plant', fPlant.value);
+  if (fCompany.value) qs.set('company', fCompany.value);
+  if (fName.value.trim()) {
+    const v = fName.value.trim();
+    qs.set('name', v);
+  }
 
-  const data = await fetchJSON('/api/admin/logins?' + params.toString());
+  const data = await fetchJSON('/api/admin/logins?' + qs.toString());
   count.textContent = `${data.count} currently logged in`;
   tbody.innerHTML = '';
   data.rows.forEach(r => {
@@ -101,9 +113,10 @@ async function loadTable() {
       <td>${r.cluster || ''}</td>
       <td>${r.plant}</td>
       <td>${r.ts}</td>
-      <td><button data-id="${r.id}" class="del">Delete</button></td>`;
+      <td><button class="btn danger ghost del" data-id="${r.id}">Delete</button></td>`;
     tbody.appendChild(tr);
   });
+
   // bind deletes
   tbody.querySelectorAll('button.del').forEach(btn => {
     btn.addEventListener('click', async (e) => {
@@ -115,14 +128,15 @@ async function loadTable() {
   });
 }
 
+// ---------- chart ----------
 async function loadChart() {
-  if (!window.Chart) return; // guard CDN
-  const params = new URLSearchParams({ start: start.value, end: end.value });
-  if (fArea.value) params.set('area', fArea.value);
-  if (fCluster.value) params.set('cluster', fCluster.value);
-  if (fPlant.value) params.set('plant', fPlant.value);
+  if (!window.Chart) return;
+  const qs = new URLSearchParams({ start: start.value, end: end.value });
+  if (gArea.value) qs.set('area', gArea.value);
+  if (gCluster.value) qs.set('cluster', gCluster.value);
+  if (gPlant.value) qs.set('plant', gPlant.value);
 
-  const rows = await fetchJSON('/api/admin/metrics?' + params.toString());
+  const rows = await fetchJSON('/api/admin/metrics?' + qs.toString());
   const labels = rows.map(r => r.date);
   const counts = rows.map(r => r.count);
 
@@ -135,11 +149,10 @@ async function loadChart() {
   });
 }
 
-// ---- auth flow ----
+// ---------- auth flow ----------
 async function doLogin() {
   aerr.classList.add('hidden');
   try {
-    // IMPORTANT: actually call the login API
     await fetchJSON('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
@@ -156,27 +169,47 @@ async function enterPanel() {
   loginBox.classList.add('hidden');
   panel.classList.remove('hidden');
   logoutBtn.classList.remove('hidden');
-  await initFilters();
+
+  await loadMeta();
+
+  // build independent chains
+  buildAreaChain(fArea, fCluster, fPlant);
+  initCompany();
+  buildAreaChain(gArea, gCluster, gPlant);
+  initDates();
+
   await loadTable();
   await loadChart();
   resetIdleTimer();
+
   if (pollHandle) clearInterval(pollHandle);
-  pollHandle = setInterval(async () => { await loadTable(); await loadChart(); }, POLL_MS);
+  pollHandle = setInterval(loadTable, POLL_MS); // only table is live; graph by button
 }
 
 async function boot() {
-  // First, check if we already have a session
   try {
     const me = await fetchJSON('/api/admin/me');
-    if (me.authed) { await enterPanel(); }
-  } catch { /* not authed; stay on login box */ }
+    if (me.authed) await enterPanel();
+  } catch {}
 }
 boot();
 
-// ---- events ----
+// ---------- events ----------
 loginBtn.addEventListener('click', doLogin);
-// enter key submits
-['u','p'].forEach(id => $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); }));
-logoutBtn.addEventListener('click', async () => { await fetchJSON('/api/admin/logout', { method: 'POST' }); location.reload(); });
-applyBtn.addEventListener('click', async () => { await loadTable(); await loadChart(); });
-$('loadChart').addEventListener('click', loadChart);
+['u','p'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); }));
+logoutBtn.addEventListener('click', async () => { try { await fetchJSON('/api/admin/logout', { method: 'POST' }); } catch {} location.reload(); });
+
+applyBtn.addEventListener('click', loadTable);
+loadChartBtn.addEventListener('click', loadChart);
+
+// tabs
+tabs.forEach(t => {
+  t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    panes.forEach(p => p.classList.add('hidden'));
+    t.classList.add('active');
+    $(t.dataset.tab).classList.remove('hidden');
+    // draw chart if opening Analytics tab and nothing drawn yet
+    if (t.dataset.tab === 'tab-analytics' && !chart) loadChart();
+  });
+});
