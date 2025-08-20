@@ -34,10 +34,45 @@ button{cursor:pointer;border:0;background:var(--accent);color:#fff;font-weight:7
   height: 320px !important;            /* hard height */
 }
 
-/* Tabs */
-.tabs { display:flex; gap:.5rem; border-bottom:1px solid grey; margin-bottom:1rem; }
-.tab { background:transparent; border:none; padding:.6rem 1rem; cursor:pointer; font-weight:600; }
-.tab.active { border-bottom:3px solid #0b6a27; color:#0b6a27; }
+/* === Fix header logout button (stop full width) === */
+header .btn,
+.row-between .btn {
+  display: inline-flex;      /* not block */
+  width: auto;               /* don't stretch */
+  padding: .5rem .9rem;
+}
+
+/* === Tabs: own look, not the .btn look === */
+.tabs {
+  display: flex;
+  gap: .5rem;
+  border-bottom: 1px solid #d8e5da;
+  margin: .5rem 0 1rem;
+}
+
+/* wipe inherited .btn styles inside tabs */
+.tabs .tab {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding: .55rem .9rem;
+  font-weight: 600;
+  color: #24412d;            /* visible on light bg */
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  line-height: 1.1;
+}
+
+.tabs .tab:hover { opacity: .85; }
+.tabs .tab.active {
+  color: #0b6a27;            /* PDO green */
+  border-color: #0b6a27;     /* underline for active tab */
+}
+
+/* ensure hidden panes actually hide */
+.hidden { display: none !important; }
+
 
 /* Layout helpers */
 .grid-4 { display:grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap:.75rem; }
